@@ -1,0 +1,155 @@
+import { useState } from "react";
+import { Link, useLocation } from "wouter";
+import { Input } from "@/components/ui/input";
+import { Button } from "@/components/ui/button";
+import { NAVIGATION_ITEMS } from "@/lib/constants";
+import { Menu, Search, X } from "lucide-react";
+
+const Header = () => {
+  const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
+  const [location] = useLocation();
+
+  const toggleMobileMenu = () => {
+    setIsMobileMenuOpen(!isMobileMenuOpen);
+  };
+
+  return (
+    <header className="sticky top-0 z-50 bg-white shadow-sm">
+      <div className="container mx-auto px-4">
+        {/* Top Bar with Search */}
+        <div className="py-3 border-b border-slate-100">
+          <div className="relative w-full">
+            <Input
+              type="text"
+              placeholder="Search articles, topics, or keywords..."
+              className="py-2 pl-10 pr-4 w-full rounded-full border border-slate-200 focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary transition-colors"
+            />
+            <Search className="absolute left-3 top-3 h-4 w-4 text-slate-400" />
+          </div>
+        </div>
+
+        {/* Main Navigation */}
+        <div className="grid grid-cols-3 items-center py-3">
+          {/* Left nav items (Desktop) */}
+          <nav className="hidden md:flex space-x-4">
+            {NAVIGATION_ITEMS.slice(
+              0,
+              Math.ceil(NAVIGATION_ITEMS.length / 2),
+            ).map((item) => (
+              <Link
+                key={item.path}
+                href={item.path}
+                className={`font-medium transition-colors ${
+                  location === item.path
+                    ? "text-primary"
+                    : "text-slate-600 hover:text-primary"
+                }`}
+              >
+                {item.name}
+              </Link>
+            ))}
+          </nav>
+
+          {/* Mobile Menu Toggle (Left aligned) */}
+          <div className="md:hidden flex items-center">
+            <Button
+              variant="ghost"
+              size="icon"
+              className="p-2 rounded-full hover:bg-slate-100"
+              onClick={toggleMobileMenu}
+            >
+              {isMobileMenuOpen ? (
+                <X className="h-5 w-5 text-slate-700" />
+              ) : (
+                <Menu className="h-5 w-5 text-slate-700" />
+              )}
+            </Button>
+          </div>
+
+          {/* Logo and Site Name (Center aligned) */}
+          <div className="flex justify-center flex-col items-center">
+            <Link href="/" className="flex flex-col items-center">
+              <img
+                src="/images/infotrakk-logo.svg"
+                alt="InfoTrakk Logo"
+                className="h-14 w-auto mb-1"
+              />
+              <span className="text-xl font-bold bg-gradient-to-r from-primary/90 to-primary text-transparent bg-clip-text">
+                InfoTrakk
+              </span>
+            </Link>
+          </div>
+
+          {/* Right nav items & Author Info (Desktop) */}
+          <div className="hidden md:flex flex-col items-end">
+            {/* Contact info */}
+            <div className="flex flex-col items-end mb-1">
+              <span className="text-sm font-medium text-primary">
+                Keith Masinde
+              </span>
+              <span className="text-xs text-slate-600">
+                M.keith.info@gmail.com
+              </span>
+            </div>
+
+            {/* Navigation */}
+            <nav className="flex space-x-4 justify-end">
+              {NAVIGATION_ITEMS.slice(
+                Math.ceil(NAVIGATION_ITEMS.length / 2),
+              ).map((item) => (
+                <Link
+                  key={item.path}
+                  href={item.path}
+                  className={`font-medium transition-colors ${
+                    location === item.path
+                      ? "text-primary"
+                      : "text-slate-600 hover:text-primary"
+                  }`}
+                >
+                  {item.name}
+                </Link>
+              ))}
+            </nav>
+          </div>
+
+          {/* Empty div for mobile to maintain grid alignment */}
+          <div className="md:hidden"></div>
+        </div>
+      </div>
+
+      {/* Mobile Menu */}
+      {isMobileMenuOpen && (
+        <div className="md:hidden">
+          <div className="px-4 py-3 space-y-2 bg-white border-t border-slate-200">
+            {/* Contact info for mobile */}
+            <div className="px-3 py-2 mb-2 border-b border-slate-100">
+              <span className="block font-medium text-primary">
+                Keith Masinde
+              </span>
+              <span className="block text-xs text-slate-600">
+                M.keith.info@gmail.com
+              </span>
+            </div>
+
+            {NAVIGATION_ITEMS.map((item) => (
+              <Link
+                key={item.path}
+                href={item.path}
+                onClick={() => setIsMobileMenuOpen(false)}
+                className={`block py-2 px-3 rounded-lg font-medium ${
+                  location === item.path
+                    ? "bg-primary/10 text-primary"
+                    : "text-slate-600 hover:bg-slate-100"
+                }`}
+              >
+                {item.name}
+              </Link>
+            ))}
+          </div>
+        </div>
+      )}
+    </header>
+  );
+};
+
+export default Header;
